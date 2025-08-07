@@ -1,0 +1,5 @@
+http://localhost:3000/api/attendance/by-date?start=2025-07-28&end=2025-07-28
+http://localhost:3000/api/attendance/by-date?start=2025-07-01&end=2025-07-15
+
+/api/attendance
+
