@@ -86,8 +86,55 @@ app.get('/api/attendance/by-date', async (req, res) => {
     }
 });
 
+// =======================================================================
+// API 3: LẤY TOÀN BỘ THÔNG TIN NHÂN VIÊN (Chức năng mới)
+// =======================================================================
+/**
+ * API Endpoint: GET /api/users
+ * Mục đích: Kết nối và lấy toàn bộ danh sách người dùng (nhân viên) trên máy chấm công.
+ */
+app.get('/api/users', async (req, res) => {
+    console.log('✅ Nhận được yêu cầu lấy danh sách nhân viên...');
+    
+    const zk = new ZKTeco(deviceIP, devicePort, timeout);
+
+    try {
+        // 1. Kết nối đến thiết bị
+        await zk.createSocket();
+        console.log('✅ Kết nối thành công!');
+
+        // 2. Lấy danh sách người dùng
+        // Thư viện này tự động hóa quy trình: ReadAllUserID -> lặp qua SSR_GetAllUserInfo
+        console.log('Đang lấy danh sách nhân viên...');
+        const users = await zk.getUsers();
+        console.log(`✅ Lấy dữ liệu thành công! Tổng số nhân viên: ${users.data.length}`);
+
+        // 3. Trả về dữ liệu
+        // Lưu ý: Dữ liệu này không chứa thông tin "phòng ban" vì nó không tồn tại trên thiết bị.
+        res.status(200).json({
+            success: true,
+            message: `Lấy thành công ${users.data.length} nhân viên.`,
+            data: users.data
+        });
+
+    } catch (error) {
+        console.error('❌ Đã xảy ra lỗi:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Đã xảy ra lỗi trong quá trình xử lý.',
+            error: error.message
+        });
+    } finally {
+        // 4. Ngắt kết nối
+        await zk.disconnect();
+        console.log('✅ Đã ngắt kết nối.');
+    }
+});
 
 // Khởi chạy server
 app.listen(port, () => {
     console.log(`Backend server đang chạy tại http://localhost:${port}`);
+    console.log(`🚀 Để lấy toàn bộ dữ liệu chấm công: http://localhost:${port}/api/attendance`);
+    console.log(`🚀 Để lấy dữ liệu chấm công theo ngày: http://localhost:${port}/api/attendance/by-date?start=YYYY-MM-DD&end=YYYY-MM-DD`);
+    console.log(`🚀 Để lấy danh sách nhân viên: http://localhost:${port}/api/users`);
 });

@@ -3,3 +3,10 @@ http://localhost:3000/api/attendance/by-date?start=2025-07-01&end=2025-07-15
 
 /api/attendance
 
+GET /api/attendance - Lấy tất cả dữ liệu chấm công
+GET /api/attendance/by-date?start=2025-08-07&end=2025-08-07 - Lấy dữ liệu theo ngày
+GET /api/users - Lấy danh sách nhân viên (MỚI)
+
+GET /api/users - Lấy danh sách nhân viên
+GET /api/users/1 - Lấy thông tin nhân viên theo ID
+curl http://localhost:3000/api/users
